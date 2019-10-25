@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <div onclick="throttle()">lslsjldkajfladfja</div>
+</body>
+</html>
+<script>
+    const throttle = (delay = 2000) => {
+        console.log(this)
+        let flag = true;
+        return ((...args) => {
+            if (!flag) return;
+            flag = false;
+            setTimeout(() => {
+                test.apply(this, args);
+                flag = true;
+            }, delay);
+        }).apply(this);
+    };
+
+    const test = () => {
+        console.log(111)
+    }
+</script>

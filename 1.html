@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+<script>
+    //如果没有catch，抛出的错误不会传递到外层。
+    const someAsyncThing = function() {
+        return new Promise(function(resolve, reject) {
+            // 下面一行会报错，因为x没有声明
+            resolve(x + 2);
+        });
+    };
+    someAsyncThing().then(function() {
+        console.log('everything is great');
+    });
+    setTimeout(() => { console.log(123) }, 2000);
+    // Uncaught (in promise) ReferenceError: x is not defined
+    // 123
+
+
+    //finally
+    promise
+        .finally(() => {
+            // 语句
+        });
+
+    // 等同于
+    promise
+        .then(
+            result => {
+                // 语句
+                return result;
+            },
+            error => {
+                // 语句
+                throw error;
+            }
+        );
+    //上面代码中，如果不使用finally方法，同样的语句需要为成功和失败两种情况各写一次。有了finally方法，则只需要写一次。
+    //它的实现方法如下
+    Promise.prototype.finally = function (callback) {
+        let P = this.constructor;
+        return this.then(
+            value => P.resolve(callback()).then(() => value),
+            reason => P.resolve(callback()).then(() => { throw reason })
+        )
+    }
+    // resolve 的值是 undefined
+    Promise.resolve(2).then(() => {}, () => {})
+
+    // resolve 的值是 2
+    Promise.resolve(2).finally(() => {})
+
+    // reject 的值是 undefined
+    Promise.reject(3).then(() => {}, () => {})
+
+    // reject 的值是 3
+    Promise.reject(3).finally(() => {})
+
+    //finally方法总是会返回原来的值
+
+
+    //Promise.resolve()
+    setTimeout(function () {
+        console.log('three');
+    }, 0);
+    Promise.resolve().then(function () {
+        console.log('two');
+    });
+    console.log('one');
+    // one
+    // two
+    // three
+
+
+    //Promise.reject()
+    const thenable = {
+        then(resolve, reject) {
+            reject('出错了');
+        }
+    };
+
+    Promise.reject(thenable)
+        .catch(e => {
+            console.log(e === thenable)
+        })
+    // true
+</script>
+</html>
